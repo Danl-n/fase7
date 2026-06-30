@@ -1,0 +1,46 @@
+{% extends 'base_admin.html' %}
+
+{% block titulo %}{% if modo == 'crear' %}Nuevo usuario{% else %}Editar usuario{% endif %} — StreamMusic Admin{% endblock %}
+
+{% block contenido %}
+  <h1 class="mb-4">{% if modo == 'crear' %}Nuevo usuario{% else %}Editar usuario{% endif %}</h1>
+
+  <form method="post" style="max-width: 480px;">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label class="form-label">{{ form.nombre.label }}</label>
+      {{ form.nombre }}
+      {% for error in form.nombre.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+    </div>
+    <div class="mb-3">
+      <label class="form-label">{{ form.email.label }}</label>
+      {{ form.email }}
+      {% for error in form.email.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+    </div>
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label class="form-label">{{ form.tipo.label }}</label>
+        {{ form.tipo }}
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label">{{ form.rol.label }}</label>
+        {{ form.rol }}
+      </div>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">{{ form.suscripcion_estado.label }}</label>
+      {{ form.suscripcion_estado }}
+    </div>
+    {% if modo == 'crear' %}
+      <div class="mb-3">
+        <label class="form-label">{{ form.password.label }}</label>
+        {{ form.password }}
+        {% for error in form.password.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+      </div>
+    {% endif %}
+    <div class="d-flex gap-2 mt-2">
+      <button type="submit" class="btn btn-success">Guardar</button>
+      <a href="{% url 'admin_usuarios' %}" class="btn btn-outline-light">Cancelar</a>
+    </div>
+  </form>
+{% endblock %}

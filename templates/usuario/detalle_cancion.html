@@ -1,0 +1,51 @@
+{% extends 'base_usuario.html' %}
+
+{% block titulo %}{{ cancion.nombre }} — StreamMusic{% endblock %}
+
+{% block contenido %}
+  <a href="{% url 'explorar' %}" class="texto-secundario"><i class="bi bi-arrow-left"></i> Volver a explorar</a>
+
+  <div class="row mt-3">
+    <div class="col-md-3">
+      <div class="card-musica-portada" style="font-size: 4rem;"><i class="bi bi-music-note-beamed"></i></div>
+    </div>
+    <div class="col-md-9">
+      <h1>{{ cancion.nombre }}</h1>
+      <p class="texto-secundario fs-5">{{ cancion.artista.nombre|default:'Artista desconocido' }}</p>
+
+      <p>
+        <span class="badge {% if cancion.estado == 'Activo' %}bg-success{% else %}bg-secondary{% endif %}">
+          {{ cancion.estado }}
+        </span>
+        <span class="texto-secundario ms-2"><i class="bi bi-clock"></i> {{ cancion.duracion_fmt }}</span>
+        <span class="texto-secundario ms-2">
+          <i class="bi bi-play-circle"></i> {{ cancion.total_reproducciones|default:0 }} reproducciones
+        </span>
+      </p>
+
+      <p class="texto-secundario">
+        Álbum: {{ cancion.album.nombre|default:'—' }} ({{ cancion.album.fecha_lanzamiento|default:'?' }})
+      </p>
+
+      <p>
+        {% for g in cancion.generos %}
+          <span class="badge bg-dark border me-1">{{ g.nombre }}</span>
+        {% endfor %}
+      </p>
+
+      <div class="d-flex gap-2 mt-3">
+        <form method="post" action="{% url 'reproducir' cancion.sql_id %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-success"><i class="bi bi-play-fill"></i> Reproducir</button>
+        </form>
+        <form method="post" action="{% url 'toggle_like' cancion.sql_id %}">
+          {% csrf_token %}
+          <button type="submit" class="btn {% if le_gusta %}btn-danger{% else %}btn-outline-light{% endif %}">
+            <i class="bi {% if le_gusta %}bi-heart-fill{% else %}bi-heart{% endif %}"></i>
+            {% if le_gusta %}Quitar like{% else %}Me gusta{% endif %}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

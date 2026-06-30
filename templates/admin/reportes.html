@@ -1,0 +1,87 @@
+{% extends 'base_admin.html' %}
+
+{% block titulo %}Reportes — StreamMusic Admin{% endblock %}
+
+{% block contenido %}
+  <h1 class="mb-4">Reportes</h1>
+
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <h2 class="h5">Top canciones más escuchadas</h2>
+      <div class="tabla-admin">
+        <table class="table table-dark table-hover mb-0">
+          <thead><tr><th>Canción</th><th>Artista</th><th class="text-end">Reproducciones</th></tr></thead>
+          <tbody>
+            {% for c in top_canciones %}
+              <tr>
+                <td>{{ c.nombre }}</td>
+                <td>{{ c.artista.nombre }}</td>
+                <td class="text-end">{{ c.total_reproducciones|default:0 }}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="3" class="texto-secundario">Sin datos.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <h2 class="h5">Oyentes únicos por artista</h2>
+      <div class="tabla-admin">
+        <table class="table table-dark table-hover mb-0">
+          <thead><tr><th>Artista</th><th class="text-end">Oyentes únicos</th></tr></thead>
+          <tbody>
+            {% for o in oyentes_por_artista %}
+              <tr>
+                <td>{{ o.artista_nombre }}</td>
+                <td class="text-end">{{ o.total_oyentes }}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="2" class="texto-secundario">Sin datos.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <h2 class="h5">Actividad de playlists</h2>
+      <div class="tabla-admin">
+        <table class="table table-dark table-hover mb-0">
+          <thead><tr><th>Playlist</th><th>Creador</th><th class="text-end">Canciones</th></tr></thead>
+          <tbody>
+            {% for p in actividad_playlists %}
+              <tr>
+                <td>{{ p.nombre }}</td>
+                <td>{{ p.creador_nombre }}</td>
+                <td class="text-end">{{ p.cantidad_canciones }}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="3" class="texto-secundario">Sin datos.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <h2 class="h5">Usuarios por tipo</h2>
+      <div class="tabla-admin">
+        <table class="table table-dark table-hover mb-0">
+          <thead><tr><th>Tipo</th><th class="text-end">Cantidad</th></tr></thead>
+          <tbody>
+            {% for u in usuarios_por_tipo %}
+              <tr>
+                <td>{{ u.tipo|default:'Sin tipo' }}</td>
+                <td class="text-end">{{ u.cantidad }}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="2" class="texto-secundario">Sin datos.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}

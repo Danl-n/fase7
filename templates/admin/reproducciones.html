@@ -1,0 +1,24 @@
+{% extends 'base_admin.html' %}
+
+{% block titulo %}Reproducciones — StreamMusic Admin{% endblock %}
+
+{% block contenido %}
+  <h1 class="mb-4">Reproducciones (todos los usuarios)</h1>
+
+  <div class="tabla-admin">
+    <table class="table table-dark table-hover mb-0 align-middle">
+      <thead><tr><th>Usuario</th><th>Canción</th><th>Fecha</th></tr></thead>
+      <tbody>
+        {% for r in reproducciones %}
+          <tr>
+            <td>{{ r.usuario_nombre }}</td>
+            <td>{{ r.cancion_nombre }}</td>
+            <td>{{ r.fecha }}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="3" class="texto-secundario">No hay reproducciones registradas.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

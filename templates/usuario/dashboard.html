@@ -1,0 +1,46 @@
+{% extends 'base_usuario.html' %}
+
+{% block titulo %}Inicio — StreamMusic{% endblock %}
+
+{% block contenido %}
+  <h1 class="mb-1">Hola, {{ usuario.nombre }} 👋</h1>
+  <p class="texto-secundario mb-4">
+    Cuenta
+    <span class="badge {% if usuario.tipo == 'Premium' %}badge-premium{% else %}badge-free{% endif %}">
+      {{ usuario.tipo|default:'Free' }}
+    </span>
+    · Suscripción: {{ suscripcion_tipo }} ({{ suscripcion_estado }})
+  </p>
+
+  <div class="row g-3">
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="stat-numero">{{ num_playlists }}</div>
+        <div class="stat-etiqueta"><i class="bi bi-collection-play"></i> Playlists</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="stat-numero">{{ num_likes }}</div>
+        <div class="stat-etiqueta"><i class="bi bi-heart"></i> Canciones con like</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="stat-numero">{{ num_seguidos }}</div>
+        <div class="stat-etiqueta"><i class="bi bi-mic"></i> Artistas seguidos</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-card">
+        <div class="stat-numero">{{ usuario.tipo|default:'Free' }}</div>
+        <div class="stat-etiqueta"><i class="bi bi-star"></i> Tipo de cuenta</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-4 d-flex gap-2 flex-wrap">
+    <a href="{% url 'explorar' %}" class="btn btn-success"><i class="bi bi-search"></i> Explorar canciones</a>
+    <a href="{% url 'mis_playlists' %}" class="btn btn-outline-light"><i class="bi bi-collection-play"></i> Mis playlists</a>
+  </div>
+{% endblock %}

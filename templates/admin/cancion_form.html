@@ -1,0 +1,62 @@
+{% extends 'base_admin.html' %}
+
+{% block titulo %}{% if modo == 'crear' %}Nueva canción{% else %}Editar canción{% endif %} — StreamMusic Admin{% endblock %}
+
+{% block contenido %}
+  <h1 class="mb-4">{% if modo == 'crear' %}Nueva canción{% else %}Editar canción{% endif %}</h1>
+
+  <form method="post" style="max-width: 520px;">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label class="form-label">{{ form.nombre.label }}</label>
+      {{ form.nombre }}
+      {% for error in form.nombre.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label class="form-label">{{ form.estado.label }}</label>
+        {{ form.estado }}
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label">{{ form.duracion_seg.label }}</label>
+        {{ form.duracion_seg }}
+        {% for error in form.duracion_seg.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Artista</label>
+      <select name="artista_sql_id" class="form-select">
+        <option value="">Seleccioná un artista</option>
+        {% for a in artistas %}
+          <option value="{{ a.sql_id }}" {% if form.artista_sql_id.value|stringformat:'s' == a.sql_id|stringformat:'s' %}selected{% endif %}>
+            {{ a.nombre }}
+          </option>
+        {% endfor %}
+      </select>
+      {% for error in form.artista_sql_id.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+    </div>
+
+    <div class="row">
+      <div class="col-md-8 mb-3">
+        <label class="form-label">{{ form.album_nombre.label }}</label>
+        {{ form.album_nombre }}
+      </div>
+      <div class="col-md-4 mb-3">
+        <label class="form-label">{{ form.album_fecha.label }}</label>
+        {{ form.album_fecha }}
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">{{ form.generos_texto.label }}</label>
+      {{ form.generos_texto }}
+    </div>
+
+    <div class="d-flex gap-2 mt-2">
+      <button type="submit" class="btn btn-success">Guardar</button>
+      <a href="{% url 'admin_canciones' %}" class="btn btn-outline-light">Cancelar</a>
+    </div>
+  </form>
+{% endblock %}

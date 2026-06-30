@@ -1,0 +1,36 @@
+{% extends 'base_usuario.html' %}
+
+{% block titulo %}Artistas — StreamMusic{% endblock %}
+
+{% block contenido %}
+  <h1 class="mb-4">Artistas</h1>
+
+  <div class="grid-cards">
+    {% for a in artistas %}
+      <div class="card-musica">
+        <div class="card-musica-portada"><i class="bi bi-mic"></i></div>
+        <div class="fw-semibold text-truncate">{{ a.nombre }}</div>
+        <div class="texto-secundario small mb-2">{{ a.albums|length }} álbum(es)</div>
+        {% if a.albums %}
+          <ul class="texto-secundario small ps-3 mb-2">
+            {% for al in a.albums|slice:":3" %}
+              <li class="text-truncate">{{ al.nombre }} ({{ al.fecha_lanzamiento }})</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+        <form method="post" action="{% url 'toggle_seguir' a.sql_id %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-sm w-100 {% if a.siguiendo %}btn-danger{% else %}btn-outline-light{% endif %}">
+            {% if a.siguiendo %}
+              <i class="bi bi-person-dash"></i> Dejar de seguir
+            {% else %}
+              <i class="bi bi-person-plus"></i> Seguir
+            {% endif %}
+          </button>
+        </form>
+      </div>
+    {% empty %}
+      <p class="texto-secundario">No hay artistas cargados.</p>
+    {% endfor %}
+  </div>
+{% endblock %}

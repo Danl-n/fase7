@@ -1,0 +1,329 @@
+/*
+  Tema de StreamMusic: oscuro + acento verde, estilo plataforma de streaming.
+  Cubre páginas públicas (login/registro), el layout con sidebar (usuario y
+  admin), las cards del catálogo y las tablas de admin. Pulido final del
+  Bloque (f): formularios y paginación con tema oscuro consistente, y tablas
+  con scroll horizontal en mobile en vez de romper el layout.
+*/
+
+:root {
+  --sm-bg: #121212;
+  --sm-bg-elevada: #181818;
+  --sm-verde: #1db954;
+  --sm-verde-oscuro: #169c46;
+  --sm-texto: #ffffff;
+  --sm-texto-secundario: #b3b3b3;
+  --sm-borde: #282828;
+}
+
+body {
+  background-color: var(--sm-bg);
+  color: var(--sm-texto);
+  font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: var(--sm-verde);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--sm-verde-oscuro);
+}
+
+.btn-success {
+  background-color: var(--sm-verde);
+  border-color: var(--sm-verde);
+}
+.btn-success:hover {
+  background-color: var(--sm-verde-oscuro);
+  border-color: var(--sm-verde-oscuro);
+}
+
+.texto-secundario {
+  color: var(--sm-texto-secundario);
+}
+
+/* --- Páginas públicas (login / registro) --- */
+.pagina-publica {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.contenedor-publico {
+  width: 100%;
+  max-width: 420px;
+  padding: 1rem;
+}
+
+.logo-publico {
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--sm-verde);
+  margin-bottom: 1.5rem;
+}
+
+.tarjeta-publica {
+  background-color: var(--sm-bg-elevada);
+  border: 1px solid var(--sm-borde);
+  border-radius: 12px;
+  padding: 2rem;
+}
+
+.titulo-tarjeta {
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+.form-control,
+.form-select {
+  background-color: var(--sm-bg);
+  border: 1px solid var(--sm-borde);
+  color: var(--sm-texto);
+}
+.form-control:focus,
+.form-select:focus {
+  background-color: var(--sm-bg);
+  color: var(--sm-texto);
+  border-color: var(--sm-verde);
+  box-shadow: 0 0 0 0.2rem rgba(29, 185, 84, 0.25);
+}
+/* Bootstrap dibuja la flechita del <select> en negro; en fondo oscuro hay
+   que reemplazarla por una versión clara. */
+.form-select {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23b3b3b3' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+}
+.form-control::placeholder {
+  color: var(--sm-texto-secundario);
+  opacity: 1;
+}
+
+.mensajes-flash {
+  margin-bottom: 1rem;
+}
+
+/* --- Paginación --- */
+.pagination .page-link {
+  background-color: var(--sm-bg-elevada);
+  border-color: var(--sm-borde);
+  color: var(--sm-texto);
+}
+.pagination .page-link:hover {
+  background-color: #232323;
+  border-color: var(--sm-borde);
+  color: var(--sm-texto);
+}
+.pagination .page-item.disabled .page-link {
+  background-color: var(--sm-bg-elevada);
+  border-color: var(--sm-borde);
+  color: var(--sm-texto-secundario);
+}
+.pagination .page-item.active .page-link {
+  background-color: var(--sm-verde);
+  border-color: var(--sm-verde);
+  color: #08210f;
+}
+
+/* --- Layout interno con sidebar (usuario y admin) --- */
+.app-topbar {
+  background-color: var(--sm-bg-elevada);
+  border-bottom: 1px solid var(--sm-borde);
+}
+
+.app-layout {
+  display: flex;
+  align-items: stretch;
+  min-height: 100vh;
+}
+
+.app-sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  background-color: var(--sm-bg-elevada);
+  border-right: 1px solid var(--sm-borde);
+  padding: 1.5rem 0 1rem;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.sidebar-header {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--sm-verde);
+  padding: 0 1.25rem 1.25rem;
+}
+
+.sidebar-usuario {
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--sm-borde);
+  margin-bottom: 0.75rem;
+}
+.sidebar-usuario-nombre {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.sidebar-nav {
+  flex: 1;
+}
+.sidebar-nav .nav-link {
+  color: var(--sm-texto-secundario);
+  padding: 0.6rem 1.25rem;
+  border-left: 3px solid transparent;
+}
+.sidebar-nav .nav-link i {
+  margin-right: 0.5rem;
+}
+.sidebar-nav .nav-link:hover {
+  color: var(--sm-texto);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+.sidebar-nav .nav-link.active {
+  color: var(--sm-texto);
+  border-left-color: var(--sm-verde);
+  background-color: rgba(29, 185, 84, 0.1);
+  font-weight: 600;
+}
+
+.sidebar-footer {
+  padding: 0.75rem 1.25rem 0;
+  border-top: 1px solid var(--sm-borde);
+  margin-top: 0.75rem;
+}
+.sidebar-footer .nav-link {
+  color: var(--sm-texto-secundario);
+}
+
+.app-contenido {
+  flex: 1;
+  padding: 2rem;
+  min-width: 0;
+}
+
+@media (max-width: 767.98px) {
+  .app-contenido {
+    padding: 1rem;
+  }
+}
+
+/* --- Badges de tipo de cuenta / estado --- */
+.badge-premium {
+  background-color: var(--sm-verde);
+  color: #08210f;
+}
+.badge-free {
+  background-color: #535353;
+  color: #fff;
+}
+
+/* --- Tarjetas de estadísticas (dashboards) --- */
+.stat-card {
+  background-color: var(--sm-bg-elevada);
+  border: 1px solid var(--sm-borde);
+  border-radius: 10px;
+  padding: 1.25rem;
+  height: 100%;
+}
+.stat-card .stat-numero {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--sm-verde);
+}
+.stat-card .stat-etiqueta {
+  color: var(--sm-texto-secundario);
+  font-size: 0.9rem;
+}
+
+/* --- Cards de catálogo (canciones / artistas) --- */
+.grid-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+}
+@media (max-width: 575.98px) {
+  /* En mobile, 180px mínimo deja una sola columna; con 130px entran 2,
+     que es el aspecto típico de grid de una app de streaming. */
+  .grid-cards {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 0.75rem;
+  }
+}
+.card-musica {
+  background-color: var(--sm-bg-elevada);
+  border: 1px solid var(--sm-borde);
+  border-radius: 10px;
+  padding: 1rem;
+  transition: background-color 0.15s ease-in-out, transform 0.15s ease-in-out;
+  height: 100%;
+}
+.card-musica:hover {
+  background-color: #232323;
+  transform: translateY(-2px);
+}
+.card-musica-portada {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 8px;
+  background-color: #282828;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  color: var(--sm-texto-secundario);
+  margin-bottom: 0.75rem;
+}
+
+/* --- Tablas (panel admin) --- */
+.table {
+  color: var(--sm-texto);
+}
+.tabla-admin {
+  background-color: var(--sm-bg-elevada);
+  border: 1px solid var(--sm-borde);
+  border-radius: 10px;
+  /* overflow-x (en vez de hidden) deja hacer scroll horizontal en mobile
+     cuando la tabla no entra, sin romper el layout ni perder las esquinas
+     redondeadas. */
+  overflow-x: auto;
+}
+.tabla-admin table {
+  margin-bottom: 0;
+}
+.tabla-admin th {
+  color: var(--sm-texto-secundario);
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-bottom-color: var(--sm-borde) !important;
+}
+.tabla-admin td {
+  border-bottom-color: var(--sm-borde) !important;
+  vertical-align: middle;
+}
+
+/* --- Mensajes flash con tema oscuro --- */
+.alert {
+  border: 1px solid transparent;
+}
+.alert-success {
+  background-color: rgba(29, 185, 84, 0.15);
+  border-color: rgba(29, 185, 84, 0.4);
+  color: #6fe39a;
+}
+.alert-danger {
+  background-color: rgba(220, 53, 69, 0.15);
+  border-color: rgba(220, 53, 69, 0.4);
+  color: #f3919c;
+}
+.alert-warning {
+  background-color: rgba(255, 193, 7, 0.15);
+  border-color: rgba(255, 193, 7, 0.4);
+  color: #ffd866;
+}
+.alert .btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
+}

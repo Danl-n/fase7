@@ -1,0 +1,56 @@
+{# Parcial de navegación del rol usuario. Se incluye dos veces en base_usuario.html: #}
+{# una para el sidebar fijo de escritorio y otra para el offcanvas de mobile. #}
+<div class="sidebar-header">
+  <i class="bi bi-broadcast"></i> StreamMusic
+</div>
+
+<div class="sidebar-usuario">
+  <div class="sidebar-usuario-nombre">{{ request.session.user_nombre }}</div>
+  <span class="badge {% if request.session.user_tipo == 'Premium' %}badge-premium{% else %}badge-free{% endif %}">
+    {{ request.session.user_tipo }}
+  </span>
+</div>
+
+<ul class="nav flex-column sidebar-nav">
+  <li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}">
+      <i class="bi bi-house-door"></i> Inicio
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.url_name == 'explorar' or request.resolver_match.url_name == 'detalle_cancion' %}active{% endif %}" href="{% url 'explorar' %}">
+      <i class="bi bi-music-note-list"></i> Explorar
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.url_name == 'artistas' %}active{% endif %}" href="{% url 'artistas' %}">
+      <i class="bi bi-mic"></i> Artistas
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link {% if 'playlist' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'mis_playlists' %}">
+      <i class="bi bi-collection-play"></i> Mis Playlists
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.url_name == 'mis_likes' %}active{% endif %}" href="{% url 'mis_likes' %}">
+      <i class="bi bi-heart"></i> Mis Likes
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.url_name == 'mi_historial' %}active{% endif %}" href="{% url 'mi_historial' %}">
+      <i class="bi bi-clock-history"></i> Mi Historial
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.url_name == 'perfil' %}active{% endif %}" href="{% url 'perfil' %}">
+      <i class="bi bi-person-circle"></i> Perfil
+    </a>
+  </li>
+</ul>
+
+<div class="sidebar-footer">
+  <a href="{% url 'logout' %}" class="nav-link">
+    <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+  </a>
+</div>

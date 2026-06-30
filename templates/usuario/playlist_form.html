@@ -1,0 +1,22 @@
+{% extends 'base_usuario.html' %}
+
+{% block titulo %}Editar playlist — StreamMusic{% endblock %}
+
+{% block contenido %}
+  <h1 class="mb-4">Editar playlist</h1>
+
+  <form method="post" class="row g-2" style="max-width: 420px;">
+    {% csrf_token %}
+    <div class="col-12">
+      <label class="form-label">{{ form.nombre.label }}</label>
+      {{ form.nombre }}
+      {% for error in form.nombre.errors %}
+        <div class="text-danger small mt-1">{{ error }}</div>
+      {% endfor %}
+    </div>
+    <div class="col-12 d-flex gap-2 mt-2">
+      <button type="submit" class="btn btn-success">Guardar</button>
+      <a href="{% url 'mis_playlists' %}" class="btn btn-outline-light">Cancelar</a>
+    </div>
+  </form>
+{% endblock %}

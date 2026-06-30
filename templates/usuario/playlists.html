@@ -1,0 +1,40 @@
+{% extends 'base_usuario.html' %}
+
+{% block titulo %}Mis Playlists — StreamMusic{% endblock %}
+
+{% block contenido %}
+  <h1 class="mb-4">Mis Playlists</h1>
+
+  <form method="post" class="row g-2 mb-4">
+    {% csrf_token %}
+    <div class="col-8 col-md-6">
+      {{ form.nombre }}
+      {% for error in form.nombre.errors %}
+        <div class="text-danger small mt-1">{{ error }}</div>
+      {% endfor %}
+    </div>
+    <div class="col-4 col-md-3">
+      <button type="submit" class="btn btn-success w-100"><i class="bi bi-plus-lg"></i> Crear</button>
+    </div>
+  </form>
+
+  <div class="grid-cards">
+    {% for p in playlists %}
+      <div class="card-musica">
+        <div class="card-musica-portada"><i class="bi bi-collection-play"></i></div>
+        <div class="fw-semibold text-truncate">{{ p.nombre }}</div>
+        <div class="texto-secundario small mb-2">{{ p.num_canciones }} canción(es)</div>
+        <div class="d-flex gap-1">
+          <a href="{% url 'playlist_detalle' p.sql_id %}" class="btn btn-sm btn-outline-light flex-fill">Ver</a>
+          <a href="{% url 'editar_playlist' p.sql_id %}" class="btn btn-sm btn-outline-light"><i class="bi bi-pencil"></i></a>
+          <form method="post" action="{% url 'eliminar_playlist' p.sql_id %}" onsubmit="return confirm('¿Eliminar esta playlist?');">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+          </form>
+        </div>
+      </div>
+    {% empty %}
+      <p class="texto-secundario">Todavía no tenés playlists. ¡Creá la primera!</p>
+    {% endfor %}
+  </div>
+{% endblock %}

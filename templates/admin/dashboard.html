@@ -1,0 +1,67 @@
+{% extends 'base_admin.html' %}
+
+{% block titulo %}Dashboard — StreamMusic Admin{% endblock %}
+
+{% block contenido %}
+  <h1 class="mb-4">Dashboard</h1>
+
+  <div class="row row-cols-2 row-cols-md-5 g-3 mb-4">
+    <div class="col">
+      <div class="stat-card">
+        <div class="stat-numero">{{ total_usuarios }}</div>
+        <div class="stat-etiqueta"><i class="bi bi-people"></i> Usuarios</div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="stat-card">
+        <div class="stat-numero">{{ total_canciones }}</div>
+        <div class="stat-etiqueta"><i class="bi bi-music-note-list"></i> Canciones</div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="stat-card">
+        <div class="stat-numero">{{ total_artistas }}</div>
+        <div class="stat-etiqueta"><i class="bi bi-mic"></i> Artistas</div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="stat-card">
+        <div class="stat-numero">{{ total_playlists }}</div>
+        <div class="stat-etiqueta"><i class="bi bi-collection-play"></i> Playlists</div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="stat-card">
+        <div class="stat-numero">{{ total_reproducciones }}</div>
+        <div class="stat-etiqueta"><i class="bi bi-play-circle"></i> Reproducciones</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-md-6">
+      <h2 class="h5">Usuarios por tipo</h2>
+      <div class="stat-card">
+        <p class="mb-2"><span class="badge badge-free">Free</span> {{ usuarios_free }} usuario(s)</p>
+        <p class="mb-0"><span class="badge badge-premium">Premium</span> {{ usuarios_premium }} usuario(s)</p>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <h2 class="h5">Top 5 canciones</h2>
+      <div class="tabla-admin">
+        <table class="table table-dark table-hover mb-0">
+          <tbody>
+            {% for c in top_canciones %}
+              <tr>
+                <td>{{ c.nombre }}</td>
+                <td class="text-end">{{ c.total_reproducciones|default:0 }} <i class="bi bi-play-circle"></i></td>
+              </tr>
+            {% empty %}
+              <tr><td class="texto-secundario">Sin datos.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}

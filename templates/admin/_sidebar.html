@@ -1,0 +1,54 @@
+{# Parcial de navegación del rol admin. Se incluye en base_admin.html para #}
+{# el sidebar de escritorio y el offcanvas de mobile. #}
+<div class="sidebar-header">
+  <i class="bi bi-broadcast"></i> StreamMusic <span class="texto-secundario fs-6">Admin</span>
+</div>
+
+<div class="sidebar-usuario">
+  <div class="sidebar-usuario-nombre">{{ request.session.user_nombre }}</div>
+  <span class="badge bg-danger-subtle text-danger-emphasis">Administrador</span>
+</div>
+
+<ul class="nav flex-column sidebar-nav">
+  <li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}" href="{% url 'admin_dashboard' %}">
+      <i class="bi bi-speedometer2"></i> Dashboard
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link {% if 'admin_usuario' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'admin_usuarios' %}">
+      <i class="bi bi-people"></i> Usuarios
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link {% if 'admin_cancion' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'admin_canciones' %}">
+      <i class="bi bi-music-note-list"></i> Canciones
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link {% if 'admin_artista' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'admin_artistas' %}">
+      <i class="bi bi-mic"></i> Artistas
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.url_name == 'admin_playlists' %}active{% endif %}" href="{% url 'admin_playlists' %}">
+      <i class="bi bi-collection-play"></i> Playlists
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.url_name == 'admin_reproducciones' %}active{% endif %}" href="{% url 'admin_reproducciones' %}">
+      <i class="bi bi-play-circle"></i> Reproducciones
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.url_name == 'admin_reportes' %}active{% endif %}" href="{% url 'admin_reportes' %}">
+      <i class="bi bi-bar-chart"></i> Reportes
+    </a>
+  </li>
+</ul>
+
+<div class="sidebar-footer">
+  <a href="{% url 'logout' %}" class="nav-link">
+    <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+  </a>
+</div>

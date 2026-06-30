@@ -1,0 +1,20 @@
+{% extends 'base_usuario.html' %}
+
+{% block titulo %}Mis Likes — StreamMusic{% endblock %}
+
+{% block contenido %}
+  <h1 class="mb-4">Mis Likes</h1>
+
+  <div class="grid-cards">
+    {% for c in canciones %}
+      <a href="{% url 'detalle_cancion' c.sql_id %}" class="card-musica text-decoration-none text-reset">
+        <div class="card-musica-portada"><i class="bi bi-heart-fill text-danger"></i></div>
+        <div class="fw-semibold text-truncate">{{ c.nombre }}</div>
+        <div class="texto-secundario small text-truncate">{{ c.artista.nombre|default:'Artista desconocido' }}</div>
+        <div class="texto-secundario small">{{ c.duracion_fmt }}</div>
+      </a>
+    {% empty %}
+      <p class="texto-secundario">Todavía no le diste like a ninguna canción.</p>
+    {% endfor %}
+  </div>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'base_admin.html' %}
+
+{% block titulo %}Usuarios — StreamMusic Admin{% endblock %}
+
+{% block contenido %}
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0">Usuarios</h1>
+    <a href="{% url 'admin_usuario_crear' %}" class="btn btn-success"><i class="bi bi-plus-lg"></i> Nuevo usuario</a>
+  </div>
+
+  <div class="tabla-admin">
+    <table class="table table-dark table-hover mb-0 align-middle">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th class="d-none d-md-table-cell">Email</th>
+          <th>Tipo</th>
+          <th class="d-none d-md-table-cell">Suscripción</th>
+          <th class="d-none d-md-table-cell">Rol</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in usuarios %}
+          <tr>
+            <td>{{ u.nombre }}</td>
+            <td class="d-none d-md-table-cell">{{ u.email }}</td>
+            <td>
+              <span class="badge {% if u.tipo == 'Premium' %}badge-premium{% else %}badge-free{% endif %}">
+                {{ u.tipo|default:'Free' }}
+              </span>
+            </td>
+            <td class="d-none d-md-table-cell">{{ u.suscripcion_estado }}</td>
+            <td class="d-none d-md-table-cell">
+              <span class="badge {% if u.rol == 'admin' %}bg-danger{% else %}bg-secondary{% endif %}">
+                {{ u.rol|default:'usuario' }}
+              </span>
+            </td>
+            <td class="text-end">
+              <a href="{% url 'admin_usuario_editar' u.sql_id %}" class="btn btn-sm btn-outline-light"><i class="bi bi-pencil"></i></a>
+              <form method="post" action="{% url 'admin_usuario_eliminar' u.sql_id %}" class="d-inline" onsubmit="return confirm('¿Eliminar este usuario?');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+              </form>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="6" class="texto-secundario">No hay usuarios.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
