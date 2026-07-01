@@ -51,6 +51,40 @@
     </main>
   </div>
 
+  <!-- Reproductor decorativo fijo — puramente visual, sin audio real.
+       Da el aspecto de una app de streaming real. Solo visible en desktop. -->
+  <div class="player-bar d-none d-md-flex">
+    <div class="player-portada sm-grad-3">S</div>
+    <div class="player-info">
+      <div class="player-titulo">Shape of You</div>
+      <div class="player-artista">Ed Sheeran</div>
+    </div>
+    <i class="bi bi-heart-fill player-like"></i>
+
+    <div class="player-controles">
+      <button class="player-btn" title="Aleatorio"><i class="bi bi-shuffle"></i></button>
+      <button class="player-btn" title="Anterior"><i class="bi bi-skip-start-fill"></i></button>
+      <button class="player-btn player-btn-play" title="Reproducir"><i class="bi bi-play-circle-fill"></i></button>
+      <button class="player-btn" title="Siguiente"><i class="bi bi-skip-end-fill"></i></button>
+      <button class="player-btn" title="Repetir"><i class="bi bi-repeat"></i></button>
+    </div>
+
+    <div class="player-progreso">
+      <span class="player-tiempo">1:23</span>
+      <div class="player-barra">
+        <div class="player-barra-fill" style="width: 35%"></div>
+      </div>
+      <span class="player-tiempo">3:53</span>
+    </div>
+
+    <div class="player-volumen d-none d-lg-flex">
+      <i class="player-btn bi bi-volume-up-fill" style="font-size: 0.85rem;"></i>
+      <div class="player-volumen-barra">
+        <div class="player-volumen-fill"></div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

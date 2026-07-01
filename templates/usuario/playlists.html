@@ -21,7 +21,7 @@
   <div class="grid-cards">
     {% for p in playlists %}
       <div class="card-musica">
-        <div class="card-musica-portada"><i class="bi bi-collection-play"></i></div>
+        <div class="card-musica-portada {% cycle 'sm-grad-0' 'sm-grad-1' 'sm-grad-2' 'sm-grad-3' 'sm-grad-4' 'sm-grad-5' 'sm-grad-6' 'sm-grad-7' %}">{{ p.nombre|first|upper }}</div>
         <div class="fw-semibold text-truncate">{{ p.nombre }}</div>
         <div class="texto-secundario small mb-2">{{ p.num_canciones }} canción(es)</div>
         <div class="d-flex gap-1">

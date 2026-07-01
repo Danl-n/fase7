@@ -5,7 +5,35 @@
 {% block contenido %}
   <h1 class="mb-4">Reportes</h1>
 
+  {# ---- Tarjetas de contexto rápido ---- #}
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="stat-card">
+        <i class="bi bi-play-circle stat-card-bg-icon"></i>
+        <div class="stat-numero">{{ total_repro }}</div>
+        <div class="stat-etiqueta"><i class="bi bi-play-circle"></i> Reproducciones totales</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="stat-card">
+        <i class="bi bi-mic stat-card-bg-icon"></i>
+        <div class="stat-valor-texto" title="{{ top_artista_nombre }}">{{ top_artista_nombre }}</div>
+        <div class="stat-etiqueta"><i class="bi bi-trophy"></i> Artista más escuchado</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="stat-card">
+        <i class="bi bi-music-note-beamed stat-card-bg-icon"></i>
+        <div class="stat-valor-texto" title="{{ top_cancion_nombre }}">{{ top_cancion_nombre }}</div>
+        <div class="stat-etiqueta"><i class="bi bi-hash"></i> Canción #1</div>
+      </div>
+    </div>
+  </div>
+
+  {# ---- Sección canciones y artistas ---- #}
   <div class="row g-4">
+
+    {# Tabla: top canciones #}
     <div class="col-lg-6">
       <h2 class="h5">Top canciones más escuchadas</h2>
       <div class="tabla-admin">
@@ -24,8 +52,18 @@
           </tbody>
         </table>
       </div>
+
+      {# Gráfico 1: barras horizontales de canciones #}
+      {% if chart_canciones_labels %}
+        <div class="grafico-contenedor">
+          <canvas id="chart-canciones"></canvas>
+        </div>
+      {% else %}
+        <p class="texto-secundario small mt-3">Aún no hay reproducciones para graficar.</p>
+      {% endif %}
     </div>
 
+    {# Tabla + Gráfico 2: oyentes únicos por artista #}
     <div class="col-lg-6">
       <h2 class="h5">Oyentes únicos por artista</h2>
       <div class="tabla-admin">
@@ -43,7 +81,21 @@
           </tbody>
         </table>
       </div>
+
+      {# Gráfico 2: barras horizontales de artistas #}
+      {% if chart_artistas_labels %}
+        <div class="grafico-contenedor">
+          <canvas id="chart-artistas"></canvas>
+        </div>
+      {% else %}
+        <p class="texto-secundario small mt-3">Sin datos de oyentes para graficar.</p>
+      {% endif %}
     </div>
+
+  </div>{# /row canciones+artistas #}
+
+  {# ---- Sección playlists y usuarios ---- #}
+  <div class="row g-4 mt-1">
 
     <div class="col-lg-6">
       <h2 class="h5">Actividad de playlists</h2>
@@ -65,6 +117,7 @@
       </div>
     </div>
 
+    {# Tabla + Gráfico 3: usuarios por tipo con dona #}
     <div class="col-lg-6">
       <h2 class="h5">Usuarios por tipo</h2>
       <div class="tabla-admin">
@@ -82,6 +135,150 @@
           </tbody>
         </table>
       </div>
+
+      {# Gráfico 3: dona de distribución de usuarios #}
+      {% if chart_tipo_valores %}
+        <div class="grafico-contenedor grafico-dona">
+          <canvas id="chart-tipo-reportes"></canvas>
+        </div>
+      {% endif %}
     </div>
-  </div>
+
+  </div>{# /row playlists+usuarios #}
+
+  {# Datos JSON para Chart.js — invisibles en la página, los lee el script #}
+  {{ chart_canciones_labels|json_script:"json-canc-labels" }}
+  {{ chart_canciones_valores|json_script:"json-canc-valores" }}
+  {{ chart_artistas_labels|json_script:"json-art-labels" }}
+  {{ chart_artistas_valores|json_script:"json-art-valores" }}
+  {{ chart_tipo_labels|json_script:"json-tipo-labels" }}
+  {{ chart_tipo_valores|json_script:"json-tipo-valores" }}
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(function () {
+  'use strict';
+
+  /* ── Configuración compartida para barras horizontales ── */
+  function barrasHorizontales(canvasId, labels, values, titulo, color) {
+    const canv = document.getElementById(canvasId);
+    if (!canv) return;
+    new Chart(canv, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          data: values,
+          backgroundColor: color,
+          borderRadius: 5,
+          borderSkipped: false,
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          title: {
+            display: true,
+            text: titulo,
+            color: '#ffffff',
+            font: { size: 14, weight: '600' },
+            padding: { bottom: 14 }
+          },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => `  ${ctx.parsed.x}`
+            }
+          }
+        },
+        scales: {
+          x: {
+            beginAtZero: true,
+            grid: { color: '#2A2A2A' },
+            ticks: { color: '#B3B3B3', precision: 0 }
+          },
+          y: {
+            grid: { display: false },
+            ticks: { color: '#ffffff' }
+          }
+        }
+      }
+    });
+  }
+
+  /* ── Gráfico 1: Barras — top canciones ── */
+  barrasHorizontales(
+    'chart-canciones',
+    JSON.parse(document.getElementById('json-canc-labels').textContent),
+    JSON.parse(document.getElementById('json-canc-valores').textContent),
+    'Reproducciones por canción',
+    '#1DB954'
+  );
+
+  /* ── Gráfico 2: Barras — oyentes por artista ── */
+  barrasHorizontales(
+    'chart-artistas',
+    JSON.parse(document.getElementById('json-art-labels').textContent),
+    JSON.parse(document.getElementById('json-art-valores').textContent),
+    'Oyentes únicos por artista',
+    '#1AA34A'   /* verde un tono más oscuro para diferenciar del de canciones */
+  );
+
+  /* ── Gráfico 3: Dona — distribución de usuarios ── */
+  const canvTipo = document.getElementById('chart-tipo-reportes');
+  if (canvTipo) {
+    const labelsTipo  = JSON.parse(document.getElementById('json-tipo-labels').textContent);
+    const valuesTipo  = JSON.parse(document.getElementById('json-tipo-valores').textContent);
+
+    new Chart(canvTipo, {
+      type: 'doughnut',
+      data: {
+        labels: labelsTipo,   /* ya incluyen el % calculado en la vista, ej. "Free — 47%" */
+        datasets: [{
+          data: valuesTipo,
+          /* Orden alfabético del pipeline: Free primero, Premium segundo */
+          backgroundColor: ['#535353', '#1DB954'],
+          borderColor: '#121212',
+          borderWidth: 3,
+          hoverOffset: 10,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '62%',
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              color: '#B3B3B3',
+              padding: 18,
+              font: { size: 13 },
+              usePointStyle: true,
+              pointStyleWidth: 10,
+            }
+          },
+          title: {
+            display: true,
+            text: 'Distribución de usuarios por tipo',
+            color: '#ffffff',
+            font: { size: 14, weight: '600' },
+            padding: { bottom: 12 }
+          },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => `  ${ctx.label} · ${ctx.parsed} usuario(s)`
+            }
+          }
+        }
+      }
+    });
+  }
+
+})();
+</script>
 {% endblock %}

@@ -8,7 +8,7 @@
   <div class="grid-cards">
     {% for a in artistas %}
       <div class="card-musica">
-        <div class="card-musica-portada"><i class="bi bi-mic"></i></div>
+        <div class="card-musica-portada {% cycle 'sm-grad-0' 'sm-grad-1' 'sm-grad-2' 'sm-grad-3' 'sm-grad-4' 'sm-grad-5' 'sm-grad-6' 'sm-grad-7' %}">{{ a.nombre|first|upper }}</div>
         <div class="fw-semibold text-truncate">{{ a.nombre }}</div>
         <div class="texto-secundario small mb-2">{{ a.albums|length }} álbum(es)</div>
         {% if a.albums %}

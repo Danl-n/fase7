@@ -20,15 +20,27 @@ CANCIONES_POR_PAGINA = 20
 @admin_requerido
 def dashboard(request):
     db = get_db()
+
+    # Se sacan como variables locales para reutilizarlas en los datos del gráfico
+    usuarios_free    = db.usuarios.count_documents({'tipo': 'Free'})
+    usuarios_premium = db.usuarios.count_documents({'tipo': 'Premium'})
+    total_tipo = usuarios_free + usuarios_premium
+
+    pct_free    = round(usuarios_free    / total_tipo * 100) if total_tipo else 0
+    pct_premium = round(usuarios_premium / total_tipo * 100) if total_tipo else 0
+
     contexto = {
-        'total_usuarios': db.usuarios.count_documents({}),
-        'total_canciones': db.canciones.count_documents({}),
-        'total_artistas': db.artistas.count_documents({}),
-        'total_playlists': db.playlists.count_documents({}),
+        'total_usuarios':      db.usuarios.count_documents({}),
+        'total_canciones':     db.canciones.count_documents({}),
+        'total_artistas':      db.artistas.count_documents({}),
+        'total_playlists':     db.playlists.count_documents({}),
         'total_reproducciones': db.reproducciones.count_documents({}),
-        'usuarios_free': db.usuarios.count_documents({'tipo': 'Free'}),
-        'usuarios_premium': db.usuarios.count_documents({'tipo': 'Premium'}),
-        'top_canciones': list(db.canciones.find().sort('total_reproducciones', -1).limit(5)),
+        'usuarios_free':       usuarios_free,
+        'usuarios_premium':    usuarios_premium,
+        'top_canciones':       list(db.canciones.find().sort('total_reproducciones', -1).limit(5)),
+        # Datos para Chart.js — dona de usuarios por tipo
+        'chart_tipo_labels':   [f'Free — {pct_free}%', f'Premium — {pct_premium}%'],
+        'chart_tipo_valores':  [usuarios_free, usuarios_premium],
     }
     return render(request, 'admin/dashboard.html', contexto)
 
@@ -433,9 +445,59 @@ def reportes(request):
     ]
     usuarios_por_tipo = list(db.usuarios.aggregate(pipeline_usuarios))
 
+    # ----------------------------------------------------------------
+    # Preparación de datos para Chart.js.
+    # NO modifica ninguna consulta PyMongo de arriba: solo transforma
+    # las listas ya calculadas en sublistas de etiquetas y valores.
+    # ----------------------------------------------------------------
+
+    # Métrica global (1 query liviana)
+    total_repro = db.reproducciones.count_documents({})
+
+    # Gráfico 1: top canciones con reproducciones > 0, máximo 8
+    canciones_top_chart = [
+        (c['nombre'], c.get('total_reproducciones', 0))
+        for c in top_canciones
+        if c.get('total_reproducciones', 0) > 0
+    ][:8]
+    chart_canciones_labels  = [x[0] for x in canciones_top_chart]
+    chart_canciones_valores = [x[1] for x in canciones_top_chart]
+
+    # Gráfico 2: oyentes únicos por artista, top 8
+    chart_artistas_labels  = [o['artista_nombre'] for o in oyentes_por_artista[:8]]
+    chart_artistas_valores = [o['total_oyentes']  for o in oyentes_por_artista[:8]]
+
+    # Gráfico 3: dona de usuarios por tipo con % en la etiqueta
+    total_u_tipo = sum(u['cantidad'] for u in usuarios_por_tipo)
+    chart_tipo_labels  = [
+        f"{u['tipo']} — {round(u['cantidad'] / total_u_tipo * 100) if total_u_tipo else 0}%"
+        for u in usuarios_por_tipo
+    ]
+    chart_tipo_valores = [u['cantidad'] for u in usuarios_por_tipo]
+
+    # Tarjetas de resumen
+    top_artista_nombre = oyentes_por_artista[0]['artista_nombre'] if oyentes_por_artista else '—'
+    top_cancion_nombre = (
+        top_canciones[0]['nombre']
+        if top_canciones and top_canciones[0].get('total_reproducciones', 0) > 0
+        else '—'
+    )
+
     return render(request, 'admin/reportes.html', {
-        'top_canciones': top_canciones,
+        # Datos de tablas (sin cambios)
+        'top_canciones':       top_canciones,
         'oyentes_por_artista': oyentes_por_artista,
         'actividad_playlists': actividad_playlists,
-        'usuarios_por_tipo': usuarios_por_tipo,
+        'usuarios_por_tipo':   usuarios_por_tipo,
+        # Tarjetas resumen
+        'total_repro':         total_repro,
+        'top_artista_nombre':  top_artista_nombre,
+        'top_cancion_nombre':  top_cancion_nombre,
+        # Datos para Chart.js
+        'chart_canciones_labels':  chart_canciones_labels,
+        'chart_canciones_valores': chart_canciones_valores,
+        'chart_artistas_labels':   chart_artistas_labels,
+        'chart_artistas_valores':  chart_artistas_valores,
+        'chart_tipo_labels':       chart_tipo_labels,
+        'chart_tipo_valores':      chart_tipo_valores,
     })

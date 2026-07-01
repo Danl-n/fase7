@@ -5,47 +5,64 @@
 {% block contenido %}
   <h1 class="mb-4">Dashboard</h1>
 
+  {# ---- Stat cards ---- #}
   <div class="row row-cols-2 row-cols-md-5 g-3 mb-4">
     <div class="col">
       <div class="stat-card">
+        <i class="bi bi-people stat-card-bg-icon"></i>
         <div class="stat-numero">{{ total_usuarios }}</div>
         <div class="stat-etiqueta"><i class="bi bi-people"></i> Usuarios</div>
       </div>
     </div>
     <div class="col">
       <div class="stat-card">
+        <i class="bi bi-music-note-list stat-card-bg-icon"></i>
         <div class="stat-numero">{{ total_canciones }}</div>
         <div class="stat-etiqueta"><i class="bi bi-music-note-list"></i> Canciones</div>
       </div>
     </div>
     <div class="col">
       <div class="stat-card">
+        <i class="bi bi-mic stat-card-bg-icon"></i>
         <div class="stat-numero">{{ total_artistas }}</div>
         <div class="stat-etiqueta"><i class="bi bi-mic"></i> Artistas</div>
       </div>
     </div>
     <div class="col">
       <div class="stat-card">
+        <i class="bi bi-collection-play stat-card-bg-icon"></i>
         <div class="stat-numero">{{ total_playlists }}</div>
         <div class="stat-etiqueta"><i class="bi bi-collection-play"></i> Playlists</div>
       </div>
     </div>
     <div class="col">
       <div class="stat-card">
+        <i class="bi bi-play-circle stat-card-bg-icon"></i>
         <div class="stat-numero">{{ total_reproducciones }}</div>
         <div class="stat-etiqueta"><i class="bi bi-play-circle"></i> Reproducciones</div>
       </div>
     </div>
   </div>
 
+  {# ---- Fila inferior: usuarios por tipo + dona | top 5 canciones ---- #}
   <div class="row g-4">
+
     <div class="col-md-6">
       <h2 class="h5">Usuarios por tipo</h2>
-      <div class="stat-card">
+
+      {# Texto existente con badges #}
+      <div class="stat-card mb-3" style="height: auto;">
+        <i class="bi bi-person-badge stat-card-bg-icon"></i>
         <p class="mb-2"><span class="badge badge-free">Free</span> {{ usuarios_free }} usuario(s)</p>
         <p class="mb-0"><span class="badge badge-premium">Premium</span> {{ usuarios_premium }} usuario(s)</p>
       </div>
+
+      {# Gráfico de dona — misma lógica que en Reportes #}
+      <div class="grafico-contenedor grafico-dona">
+        <canvas id="chart-tipo-dashboard"></canvas>
+      </div>
     </div>
+
     <div class="col-md-6">
       <h2 class="h5">Top 5 canciones</h2>
       <div class="tabla-admin">
@@ -63,5 +80,69 @@
         </table>
       </div>
     </div>
+
   </div>
+
+  {# Datos JSON para Chart.js #}
+  {{ chart_tipo_labels|json_script:"json-dash-tipo-labels" }}
+  {{ chart_tipo_valores|json_script:"json-dash-tipo-valores" }}
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(function () {
+  'use strict';
+
+  const canv = document.getElementById('chart-tipo-dashboard');
+  if (!canv) return;
+
+  const labels = JSON.parse(document.getElementById('json-dash-tipo-labels').textContent);
+  const values = JSON.parse(document.getElementById('json-dash-tipo-valores').textContent);
+
+  new Chart(canv, {
+    type: 'doughnut',
+    data: {
+      labels,          /* "Free — X%" / "Premium — X%" con % calculado en la vista */
+      datasets: [{
+        data: values,
+        backgroundColor: ['#535353', '#1DB954'],  /* Free gris, Premium verde */
+        borderColor: '#121212',
+        borderWidth: 3,
+        hoverOffset: 10,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '62%',
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: '#B3B3B3',
+            padding: 18,
+            font: { size: 13 },
+            usePointStyle: true,
+            pointStyleWidth: 10,
+          }
+        },
+        title: {
+          display: true,
+          text: 'Distribución de usuarios por tipo',
+          color: '#ffffff',
+          font: { size: 14, weight: '600' },
+          padding: { bottom: 12 }
+        },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => `  ${ctx.label} · ${ctx.parsed} usuario(s)`
+          }
+        }
+      }
+    }
+  });
+
+})();
+</script>
 {% endblock %}
