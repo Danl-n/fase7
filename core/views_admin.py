@@ -144,16 +144,34 @@ def usuario_eliminar(request, sql_id):
 @admin_requerido
 def canciones_lista(request):
     db = get_db()
-    q = request.GET.get('q', '').strip()
+
+    # Parámetros de búsqueda (existente) y nuevos filtros
+    q         = request.GET.get('q',       '').strip()
+    artista_q = request.GET.get('artista', '').strip()
+    album_q   = request.GET.get('album',   '').strip()
+    repro_q   = request.GET.get('repro',   'all')
+
     try:
         pagina = int(request.GET.get('page', 1))
     except ValueError:
         pagina = 1
     pagina = max(1, pagina)
 
+    # Construcción del filtro PyMongo — se combinan todos los criterios
+    # en el mismo dict; cada bloque es independiente y no altera los demás.
     filtro = {}
     if q:
         filtro['nombre'] = {'$regex': re.escape(q), '$options': 'i'}
+    if artista_q:
+        filtro['artista.nombre'] = {'$regex': re.escape(artista_q), '$options': 'i'}
+    if album_q:
+        filtro['album.nombre'] = {'$regex': re.escape(album_q), '$options': 'i'}
+    if repro_q == 'gt0':
+        filtro['total_reproducciones'] = {'$gt': 0}
+    elif repro_q == 'eq0':
+        filtro['total_reproducciones'] = {'$lte': 0}   # cubre 0 y campos faltantes
+    elif repro_q == 'gt5':
+        filtro['total_reproducciones'] = {'$gt': 5}
 
     total = db.canciones.count_documents(filtro)
     total_paginas = max(1, -(-total // CANCIONES_POR_PAGINA))
@@ -166,12 +184,19 @@ def canciones_lista(request):
         .limit(CANCIONES_POR_PAGINA)
     )
 
+    # hay_filtros se usa en el template para mostrar un indicador visual
+    hay_filtros = bool(q or artista_q or album_q or repro_q != 'all')
+
     return render(request, 'admin/canciones.html', {
-        'canciones': canciones,
-        'q': q,
-        'pagina': pagina,
+        'canciones':    canciones,
+        'q':            q,
+        'artista_q':    artista_q,
+        'album_q':      album_q,
+        'repro_q':      repro_q,
+        'pagina':       pagina,
         'total_paginas': total_paginas,
-        'total': total,
+        'total':        total,
+        'hay_filtros':  hay_filtros,
     })
 
 

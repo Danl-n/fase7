@@ -506,6 +506,40 @@ a:hover { color: var(--sm-verde-oscuro); }
 .grafico-dona {
   height: 300px;  /* más compacto para gráficos de dona */
 }
+/* ================================================================
+   BARRA DE FILTROS (tablas de admin)
+   ================================================================ */
+.filtro-barra {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.025);
+  border: 1px solid var(--sm-borde);
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  margin-bottom: 0.75rem;
+}
+.filtro-barra .form-control,
+.filtro-barra .form-select {
+  flex: 1;
+  min-width: 130px;
+  font-size: 0.85rem;
+  height: 34px;
+  padding-top: 0.3rem;
+  padding-bottom: 0.3rem;
+}
+.filtro-contador {
+  font-size: 0.82rem;
+  color: var(--sm-texto-sec);
+  margin-bottom: 0.6rem;
+  min-height: 1.2em;   /* evita que el layout salte cuando aparece el texto */
+}
+@media (max-width: 575.98px) {
+  .filtro-barra .form-control,
+  .filtro-barra .form-select { min-width: 100%; }
+}
+
 /* Etiqueta de texto en stat-card (artista/canción top) — fuente más pequeña para que no desborde */
 .stat-valor-texto {
   font-size: 1.1rem;

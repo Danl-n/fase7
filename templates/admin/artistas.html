@@ -3,10 +3,33 @@
 {% block titulo %}Artistas — StreamMusic Admin{% endblock %}
 
 {% block contenido %}
-  <div class="d-flex justify-content-between align-items-center mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
     <h1 class="mb-0">Artistas</h1>
     <a href="{% url 'admin_artista_crear' %}" class="btn btn-success"><i class="bi bi-plus-lg"></i> Nuevo artista</a>
   </div>
+
+  <div class="filtro-barra" id="filtro-artistas">
+    <input type="text"
+           class="form-control"
+           placeholder="Buscar por nombre…"
+           data-filtro="nombre"
+           data-modo="contains">
+    <input type="text"
+           class="form-control"
+           placeholder="Buscar por discografía…"
+           data-filtro="discografia"
+           data-modo="contains">
+    <select class="form-select" data-filtro="albums" data-modo="range">
+      <option value="">Todos los álbumes</option>
+      <option value="1">1 álbum</option>
+      <option value="2">2 álbumes</option>
+      <option value="3+">3 o más álbumes</option>
+    </select>
+    <button type="button" class="btn btn-sm btn-outline-secondary btn-limpiar">
+      <i class="bi bi-x-circle"></i> Limpiar
+    </button>
+  </div>
+  <p class="filtro-contador" id="contador-artistas"></p>
 
   <div class="tabla-admin">
     <table class="table table-dark table-hover mb-0 align-middle">
@@ -18,9 +41,12 @@
           <th></th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id="tbody-artistas">
         {% for a in artistas %}
-          <tr>
+          <tr data-filtrable
+              data-nombre="{{ a.nombre|lower }}"
+              data-discografia="{{ a.discografia|lower }}"
+              data-albums="{{ a.num_albums }}">
             <td>{{ a.nombre }}</td>
             <td class="d-none d-md-table-cell">{{ a.discografia }}</td>
             <td>{{ a.num_albums }}</td>
@@ -38,4 +64,14 @@
       </tbody>
     </table>
   </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  inicializarFiltro({
+    barraId:    'filtro-artistas',
+    tbodyId:    'tbody-artistas',
+    contadorId: 'contador-artistas',
+  });
+</script>
 {% endblock %}

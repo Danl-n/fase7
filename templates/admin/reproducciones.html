@@ -3,14 +3,40 @@
 {% block titulo %}Reproducciones — StreamMusic Admin{% endblock %}
 
 {% block contenido %}
-  <h1 class="mb-4">Reproducciones (todos los usuarios)</h1>
+  <h1 class="mb-3">Reproducciones (todos los usuarios)</h1>
+
+  <div class="filtro-barra" id="filtro-repros">
+    <input type="text"
+           class="form-control"
+           placeholder="Buscar por canción…"
+           data-filtro="cancion"
+           data-modo="contains">
+    <input type="text"
+           class="form-control"
+           placeholder="Buscar por usuario…"
+           data-filtro="usuario"
+           data-modo="contains">
+    <input type="text"
+           class="form-control"
+           placeholder="Fecha (ej: 2026-06)…"
+           data-filtro="fecha"
+           data-modo="contains"
+           title="Escribí un fragmento de la fecha ISO, por ejemplo 2026-06 para junio de 2026">
+    <button type="button" class="btn btn-sm btn-outline-secondary btn-limpiar">
+      <i class="bi bi-x-circle"></i> Limpiar
+    </button>
+  </div>
+  <p class="filtro-contador" id="contador-repros"></p>
 
   <div class="tabla-admin">
     <table class="table table-dark table-hover mb-0 align-middle">
       <thead><tr><th>Usuario</th><th>Canción</th><th>Fecha</th></tr></thead>
-      <tbody>
+      <tbody id="tbody-repros">
         {% for r in reproducciones %}
-          <tr>
+          <tr data-filtrable
+              data-usuario="{{ r.usuario_nombre|lower }}"
+              data-cancion="{{ r.cancion_nombre|lower }}"
+              data-fecha="{{ r.fecha }}">
             <td>{{ r.usuario_nombre }}</td>
             <td>{{ r.cancion_nombre }}</td>
             <td>{{ r.fecha }}</td>
@@ -21,4 +47,14 @@
       </tbody>
     </table>
   </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  inicializarFiltro({
+    barraId:    'filtro-repros',
+    tbodyId:    'tbody-repros',
+    contadorId: 'contador-repros',
+  });
+</script>
 {% endblock %}

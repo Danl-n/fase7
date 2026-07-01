@@ -3,14 +3,40 @@
 {% block titulo %}Playlists — StreamMusic Admin{% endblock %}
 
 {% block contenido %}
-  <h1 class="mb-4">Playlists (todos los usuarios)</h1>
+  <h1 class="mb-3">Playlists (todos los usuarios)</h1>
+
+  <div class="filtro-barra" id="filtro-playlists">
+    <input type="text"
+           class="form-control"
+           placeholder="Buscar por nombre…"
+           data-filtro="nombre"
+           data-modo="contains">
+    <input type="text"
+           class="form-control"
+           placeholder="Buscar por creador…"
+           data-filtro="creador"
+           data-modo="contains">
+    <select class="form-select" data-filtro="canciones" data-modo="range">
+      <option value="">Todas las cantidades</option>
+      <option value="0">Sin canciones (0)</option>
+      <option value="1-2">1 – 2 canciones</option>
+      <option value="3+">3 o más canciones</option>
+    </select>
+    <button type="button" class="btn btn-sm btn-outline-secondary btn-limpiar">
+      <i class="bi bi-x-circle"></i> Limpiar
+    </button>
+  </div>
+  <p class="filtro-contador" id="contador-playlists"></p>
 
   <div class="tabla-admin">
     <table class="table table-dark table-hover mb-0 align-middle">
       <thead><tr><th>Nombre</th><th>Creador</th><th>Canciones</th></tr></thead>
-      <tbody>
+      <tbody id="tbody-playlists">
         {% for p in playlists %}
-          <tr>
+          <tr data-filtrable
+              data-nombre="{{ p.nombre|lower }}"
+              data-creador="{{ p.creador|lower }}"
+              data-canciones="{{ p.num_canciones }}">
             <td>{{ p.nombre }}</td>
             <td>{{ p.creador }}</td>
             <td>{{ p.num_canciones }}</td>
@@ -21,4 +47,14 @@
       </tbody>
     </table>
   </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  inicializarFiltro({
+    barraId:    'filtro-playlists',
+    tbodyId:    'tbody-playlists',
+    contadorId: 'contador-playlists',
+  });
+</script>
 {% endblock %}

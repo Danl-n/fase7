@@ -3,21 +3,49 @@
 {% block titulo %}Canciones — StreamMusic Admin{% endblock %}
 
 {% block contenido %}
-  <div class="d-flex justify-content-between align-items-center mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
     <h1 class="mb-0">Canciones</h1>
     <a href="{% url 'admin_cancion_crear' %}" class="btn btn-success"><i class="bi bi-plus-lg"></i> Nueva canción</a>
   </div>
 
-  <form method="get" class="row g-2 mb-3">
-    <div class="col-8 col-md-4">
-      <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Buscar por nombre...">
-    </div>
-    <div class="col-4 col-md-2">
-      <button type="submit" class="btn btn-outline-light w-100"><i class="bi bi-search"></i></button>
-    </div>
+  {# ---- Barra de filtros (backend PyMongo) ---- #}
+  <form method="get" class="filtro-barra">
+    <input type="text"
+           name="q"
+           value="{{ q }}"
+           class="form-control"
+           placeholder="Nombre de la canción…">
+    <input type="text"
+           name="artista"
+           value="{{ artista_q }}"
+           class="form-control"
+           placeholder="Artista…">
+    <input type="text"
+           name="album"
+           value="{{ album_q }}"
+           class="form-control"
+           placeholder="Álbum…">
+    <select name="repro" class="form-select">
+      <option value="all" {% if repro_q == 'all' or not repro_q %}selected{% endif %}>Todas las reproducciones</option>
+      <option value="gt0" {% if repro_q == 'gt0' %}selected{% endif %}>Con reproducciones (&gt; 0)</option>
+      <option value="eq0" {% if repro_q == 'eq0' %}selected{% endif %}>Sin reproducciones (= 0)</option>
+      <option value="gt5" {% if repro_q == 'gt5' %}selected{% endif %}>Más de 5</option>
+    </select>
+    <button type="submit" class="btn btn-success btn-sm px-3">
+      <i class="bi bi-search"></i> Filtrar
+    </button>
+    <a href="{% url 'admin_canciones' %}" class="btn btn-sm btn-outline-secondary">
+      <i class="bi bi-x-circle"></i> Limpiar
+    </a>
   </form>
 
-  <p class="texto-secundario">{{ total }} canción(es).</p>
+  {# Indicador de resultados; si hay filtros activos muestra badge informativo #}
+  <p class="filtro-contador">
+    {{ total }} canción(es) encontrada(s)
+    {% if hay_filtros %}
+      <span class="badge bg-secondary ms-1">filtros activos</span>
+    {% endif %}
+  </p>
 
   <div class="tabla-admin mb-3">
     <table class="table table-dark table-hover mb-0 align-middle">
@@ -52,21 +80,30 @@
             </td>
           </tr>
         {% empty %}
-          <tr><td colspan="6" class="texto-secundario">No se encontraron canciones.</td></tr>
+          <tr><td colspan="6" class="texto-secundario">No se encontraron canciones con esos filtros.</td></tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
 
+  {# Paginación — todos los params de filtro se preservan en cada link #}
   {% if total_paginas > 1 %}
     <nav>
       <ul class="pagination">
         <li class="page-item {% if pagina == 1 %}disabled{% endif %}">
-          <a class="page-link" href="?q={{ q }}&page={{ pagina|add:'-1' }}">Anterior</a>
+          <a class="page-link"
+             href="?q={{ q }}&artista={{ artista_q }}&album={{ album_q }}&repro={{ repro_q }}&page={{ pagina|add:'-1' }}">
+            Anterior
+          </a>
         </li>
-        <li class="page-item disabled"><span class="page-link">Página {{ pagina }} de {{ total_paginas }}</span></li>
+        <li class="page-item disabled">
+          <span class="page-link">Página {{ pagina }} de {{ total_paginas }}</span>
+        </li>
         <li class="page-item {% if pagina == total_paginas %}disabled{% endif %}">
-          <a class="page-link" href="?q={{ q }}&page={{ pagina|add:'1' }}">Siguiente</a>
+          <a class="page-link"
+             href="?q={{ q }}&artista={{ artista_q }}&album={{ album_q }}&repro={{ repro_q }}&page={{ pagina|add:'1' }}">
+            Siguiente
+          </a>
         </li>
       </ul>
     </nav>

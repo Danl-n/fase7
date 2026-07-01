@@ -3,10 +3,41 @@
 {% block titulo %}Usuarios — StreamMusic Admin{% endblock %}
 
 {% block contenido %}
-  <div class="d-flex justify-content-between align-items-center mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
     <h1 class="mb-0">Usuarios</h1>
     <a href="{% url 'admin_usuario_crear' %}" class="btn btn-success"><i class="bi bi-plus-lg"></i> Nuevo usuario</a>
   </div>
+
+  {# ---- Barra de filtros (cliente JS) ---- #}
+  <div class="filtro-barra" id="filtro-usuarios">
+    <input type="text"
+           class="form-control"
+           placeholder="Buscar nombre o email…"
+           data-filtro="busqueda"
+           data-modo="contains"
+           title="Filtra por nombre o email">
+    <select class="form-select" data-filtro="tipo" data-modo="exact">
+      <option value="">Todos los tipos</option>
+      <option value="free">Free</option>
+      <option value="premium">Premium</option>
+    </select>
+    <select class="form-select" data-filtro="suscripcion" data-modo="exact">
+      <option value="">Toda suscripción</option>
+      <option value="activa">Activa</option>
+      <option value="cancelada">Cancelada</option>
+      <option value="vencida">Vencida</option>
+      <option value="—">Sin suscripción (—)</option>
+    </select>
+    <select class="form-select" data-filtro="rol" data-modo="exact">
+      <option value="">Todos los roles</option>
+      <option value="usuario">Usuario</option>
+      <option value="admin">Admin</option>
+    </select>
+    <button type="button" class="btn btn-sm btn-outline-secondary btn-limpiar" title="Limpiar filtros">
+      <i class="bi bi-x-circle"></i> Limpiar
+    </button>
+  </div>
+  <p class="filtro-contador" id="contador-usuarios"></p>
 
   <div class="tabla-admin">
     <table class="table table-dark table-hover mb-0 align-middle">
@@ -20,9 +51,14 @@
           <th></th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id="tbody-usuarios">
         {% for u in usuarios %}
-          <tr>
+          {# data-filtrable marca la fila como filtrable; data-* son los valores de filtro #}
+          <tr data-filtrable
+              data-tipo="{{ u.tipo|default:'Free'|lower }}"
+              data-suscripcion="{{ u.suscripcion_estado|lower }}"
+              data-rol="{{ u.rol|default:'usuario'|lower }}"
+              data-busqueda="{{ u.nombre|lower }} {{ u.email|lower }}">
             <td>{{ u.nombre }}</td>
             <td class="d-none d-md-table-cell">{{ u.email }}</td>
             <td>
@@ -50,4 +86,14 @@
       </tbody>
     </table>
   </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  inicializarFiltro({
+    barraId:    'filtro-usuarios',
+    tbodyId:    'tbody-usuarios',
+    contadorId: 'contador-usuarios',
+  });
+</script>
 {% endblock %}
