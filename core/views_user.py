@@ -200,7 +200,7 @@ def toggle_seguir(request, sql_id):
             {'sql_id': uid},
             {'$push': {'artistas_seguidos': {'sql_id': artista['sql_id'], 'nombre': artista.get('nombre', '')}}},
         )
-        messages.success(request, f"Ahora seguís a {artista.get('nombre', '')}.")
+        messages.success(request, f"Ahora sigues a {artista.get('nombre', '')}.")
 
     return redirect('artistas')
 
